@@ -9,7 +9,12 @@ export default function useAuthenticatedUser() {
     if (!user) {
       fetch("/v1/auth/me")
         .then((response) => response.json())
-        .then((data) => setUser(data));
+        .then((data) => setUser(data))
+        .catch((error) => {
+          // Gracefully handle auth errors (e.g., cloud API key missing, not authenticated)
+          console.warn("Authentication check failed:", error?.message || error);
+          // Don't set user, leaving it undefined indicates not authenticated
+        });
     }
   }, [user]);
 

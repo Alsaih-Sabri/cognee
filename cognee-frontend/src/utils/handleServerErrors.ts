@@ -17,8 +17,21 @@ export default function handleServerErrors(
       }
     }
     if (!response.ok) {
-      return response.json().then(error => {
-        error.status = response.status;
+      return response.json().then(errorData => {
+        // Create a proper Error object with a meaningful message
+        const errorMessage = errorData?.detail || errorData?.message || `HTTP ${response.status}: ${response.statusText}`;
+        const error = new Error(errorMessage);
+        // Preserve the original error data for debugging
+        Object.assign(error, {
+          status: response.status,
+          detail: errorData?.detail,
+          data: errorData
+        });
+        reject(error);
+      }).catch(() => {
+        // If response.json() fails, create a generic error
+        const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
+        Object.assign(error, { status: response.status });
         reject(error);
       });
     }

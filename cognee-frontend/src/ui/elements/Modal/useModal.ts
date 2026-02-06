@@ -31,7 +31,16 @@ export default function useModal<ModalState extends object, ConfirmActionEvent =
 
       if (maybePromise instanceof Promise) {
         return maybePromise
-          .finally(closeModal)
+          .then(() => {
+            closeModal();
+          })
+          .catch((error) => {
+            // Properly log the error with a meaningful message
+            const errorMessage = error?.message || error?.detail || (typeof error === 'string' ? error : JSON.stringify(error));
+            console.error('Modal action failed:', errorMessage);
+            // Re-throw the error so it can be handled by the caller
+            throw error;
+          })
           .finally(() => setLoading(false));
       } else {
         closeModal();

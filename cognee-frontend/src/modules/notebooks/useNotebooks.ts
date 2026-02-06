@@ -24,24 +24,24 @@ function useNotebooks(instance: CogneeInstance) {
 
   const removeNotebook = useCallback((notebookId: string) => {
     return deleteNotebook(notebookId, instance)
-    .then(() => {
-      setNotebooks((notebooks) =>
-        notebooks.filter((notebook) => notebook.id !== notebookId)
-      );
-    });
+      .then(() => {
+        setNotebooks((notebooks) =>
+          notebooks.filter((notebook) => notebook.id !== notebookId)
+        );
+      });
   }, [instance]);
 
   const fetchNotebooks = useCallback(() => {
     return getNotebooks(instance)
-    .then((notebooks) => {
-      setNotebooks(notebooks);
+      .then((notebooks) => {
+        setNotebooks(notebooks);
 
-      return notebooks;
-    })
-    .catch((error) => {
-      console.error("Error fetching notebooks:", error.detail);
-      throw error
-    });
+        return notebooks;
+      })
+      .catch((error) => {
+        console.error("Error fetching notebooks:", error?.message || error?.detail || JSON.stringify(error));
+        throw error
+      });
   }, [instance]);
 
   const updateNotebook = useCallback((updatedNotebook: Notebook) => {
@@ -85,7 +85,7 @@ function useNotebooks(instance: CogneeInstance) {
               ...existingNotebook,
               cells: existingNotebook.cells.map((existingCell) =>
                 existingCell.id === cell.id ? {
-                 ...existingCell,
+                  ...existingCell,
                   result: response.result,
                   error: response.error,
                 } : existingCell

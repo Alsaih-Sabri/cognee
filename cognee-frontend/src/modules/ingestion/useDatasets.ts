@@ -57,7 +57,7 @@ function useDatasets(useCloud = false) {
   // }, []);
 
   const addDataset = useCallback((datasetName: string) => {
-    return createDataset({ name: datasetName  }, useCloud)
+    return createDataset({ name: datasetName }, useCloud)
       .then((dataset) => {
         setDatasets((datasets) => [
           ...datasets,
@@ -79,10 +79,10 @@ function useDatasets(useCloud = false) {
 
   const fetchDatasets = useCallback(() => {
     return fetch('/v1/datasets', {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }, useCloud)
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }, useCloud)
       .then((response) => response.json())
       .then((datasets) => {
         setDatasets(datasets);
@@ -94,7 +94,7 @@ function useDatasets(useCloud = false) {
         return datasets;
       })
       .catch((error) => {
-        console.error('Error fetching datasets:', error);
+        console.error('Error fetching datasets:', error?.message || error?.detail || JSON.stringify(error));
         throw error;
       });
   }, [useCloud]);
@@ -107,12 +107,12 @@ function useDatasets(useCloud = false) {
 
         if (datasetIndex >= 0) {
           setDatasets((datasets) => [
-           ...datasets.slice(0, datasetIndex),
+            ...datasets.slice(0, datasetIndex),
             {
-             ...datasets[datasetIndex],
+              ...datasets[datasetIndex],
               data,
             },
-           ...datasets.slice(datasetIndex + 1),
+            ...datasets.slice(datasetIndex + 1),
           ]);
         }
 

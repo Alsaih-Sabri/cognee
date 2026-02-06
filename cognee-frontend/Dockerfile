@@ -4,12 +4,14 @@ FROM node:22-alpine
 # Set the working directory to /app
 WORKDIR /app
 
+# Install build dependencies for native modules
+RUN apk add --no-cache python3 make g++
+
 # Copy package.json and package-lock.json to the working directory
 COPY package.json package-lock.json ./
 
 # Install any needed packages specified in package.json
 RUN npm ci
-RUN npm rebuild lightningcss
 
 # Copy the rest of the application code to the working directory
 COPY src ./src
