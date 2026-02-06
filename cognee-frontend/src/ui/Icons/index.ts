@@ -17,3 +17,5 @@ export { default as DatasetIcon } from "./DatasetIcon";
 export { default as SettingsIcon } from "./SettingsIcon";
 export { default as NotebookIcon } from "./NotebookIcon";
 export { default as LocalCogneeIcon } from "./LocalCogneeIcon";
+export { default as MoonIcon } from "./MoonIcon";
+export { default as SunIcon } from "./SunIcon";

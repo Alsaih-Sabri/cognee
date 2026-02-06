@@ -109,7 +109,7 @@ export default function Dashboard({ accessToken }: DashboardProps) {
   // Datasets logic
 
   const [datasets, setDatasets] = useState<Dataset[]>([]);
-  const refreshDatasetsRef = useRef(() => {});
+  const refreshDatasetsRef = useRef(() => { });
 
   const handleDatasetsChange = useCallback((payload: { datasets: Dataset[], refreshDatasets: () => void }) => {
     const {
@@ -124,7 +124,7 @@ export default function Dashboard({ accessToken }: DashboardProps) {
   const isCloudEnv = isCloudEnvironment();
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col dark:bg-gray-900">
       {/* <video
         autoPlay
         loop
@@ -139,10 +139,10 @@ export default function Dashboard({ accessToken }: DashboardProps) {
       <Header user={user} />
 
       <div className="relative flex-1 flex flex-row gap-2.5 items-start w-full max-w-[1920px] max-h-[calc(100% - 3.5rem)] overflow-hidden mx-auto px-2.5 pb-2.5">
-        <div className="px-5 py-4 lg:w-96 bg-white rounded-xl h-[calc(100%-2.75rem)]">
+        <div className="px-5 py-4 lg:w-96 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl h-[calc(100%-2.75rem)] transition-colors">
           <div className="relative mb-2">
-            <label htmlFor="search-input"><SearchIcon className="absolute left-3 top-[10px] cursor-text" /></label>
-            <input id="search-input" className="text-xs leading-3 w-full h-8 flex flex-row items-center gap-2.5 rounded-3xl pl-9 placeholder-gray-300 border-gray-300 border-[1px] focus:outline-indigo-600" placeholder="Search datasets..." />
+            <label htmlFor="search-input"><SearchIcon className="absolute left-3 top-[10px] cursor-text dark:text-gray-400" /></label>
+            <input id="search-input" className="text-xs leading-3 w-full h-8 flex flex-row items-center gap-2.5 rounded-3xl pl-9 placeholder-gray-300 dark:placeholder-gray-500 border-gray-300 dark:border-gray-600 border-[1px] focus:outline-indigo-600 dark:bg-gray-700 dark:text-white" placeholder="Search datasets..." />
           </div>
 
           <AddDataToCognee
@@ -174,14 +174,14 @@ export default function Dashboard({ accessToken }: DashboardProps) {
         </div>
 
         <div className="flex-1 flex flex-col justify-between h-full overflow-y-auto">
-            {selectedNotebook && (
-              <Notebook
-                key={selectedNotebook.id}
-                notebook={selectedNotebook}
-                updateNotebook={handleNotebookUpdate}
-                runCell={runCell}
-              />
-            )}
+          {selectedNotebook && (
+            <Notebook
+              key={selectedNotebook.id}
+              notebook={selectedNotebook}
+              updateNotebook={handleNotebookUpdate}
+              runCell={runCell}
+            />
+          )}
         </div>
       </div>
     </div>

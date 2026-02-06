@@ -24,59 +24,59 @@ export default function AuthForm({
   onSignInSuccess = () => window.location.href = "/",
 }) {
   const {
-      value: isSigningIn,
-      setTrue: disableSignIn,
-      setFalse: enableSignIn,
-    } = useBoolean(false);
+    value: isSigningIn,
+    setTrue: disableSignIn,
+    setFalse: enableSignIn,
+  } = useBoolean(false);
 
-    const [signInError, setSignInError] = useState<string | null>(null);
+  const [signInError, setSignInError] = useState<string | null>(null);
 
-    const signIn = (event: React.FormEvent<AuthFormPayload>) => {
-      event.preventDefault();
-      const formElements = event.currentTarget;
+  const signIn = (event: React.FormEvent<AuthFormPayload>) => {
+    event.preventDefault();
+    const formElements = event.currentTarget;
 
-      // Backend expects username and password fields
-      const authCredentials = {
-        email: formElements.email.value,
-        password: formElements.password.value,
-      };
-
-      setSignInError(null);
-      disableSignIn();
-
-      const formattedPayload = formatPayload(authCredentials);
-
-      fetch(authUrl, {
-        method: "POST",
-        body: formattedPayload instanceof URLSearchParams ? formattedPayload.toString() : JSON.stringify(formattedPayload),
-        headers: {
-          "Content-Type": formattedPayload instanceof URLSearchParams ? "application/x-www-form-urlencoded" : "application/json",
-        },
-      })
-        .then(() => {
-          onSignInSuccess();
-        })
-        .catch(error => setSignInError(errorsMap[error.detail as keyof typeof errorsMap] || error.message))
-        .finally(() => enableSignIn());
+    // Backend expects username and password fields
+    const authCredentials = {
+      email: formElements.email.value,
+      password: formElements.password.value,
     };
 
-    return (
-      <form onSubmit={signIn} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1">
-          Email address*
-          <Input type="email" name="email" required placeholder="Email address*" defaultValue="default_user@example.com" />
-        </label>
-        <label className="flex flex-col gap-1">
-          Password*
-          <Input type="password" name="password" required placeholder="Password*" defaultValue="default_password" />
-        </label>
-        <CTAButton className="mt-6 mb-2" type="submit">
-          {submitButtonText}
-          {isSigningIn && <LoadingIndicator />}
-        </CTAButton>
-        {signInError && (
-          <span className="text-s text-red-500 mb-4">{signInError}</span>
-        )}
-      </form>
-    );
+    setSignInError(null);
+    disableSignIn();
+
+    const formattedPayload = formatPayload(authCredentials);
+
+    fetch(authUrl, {
+      method: "POST",
+      body: formattedPayload instanceof URLSearchParams ? formattedPayload.toString() : JSON.stringify(formattedPayload),
+      headers: {
+        "Content-Type": formattedPayload instanceof URLSearchParams ? "application/x-www-form-urlencoded" : "application/json",
+      },
+    })
+      .then(() => {
+        onSignInSuccess();
+      })
+      .catch(error => setSignInError(errorsMap[error.detail as keyof typeof errorsMap] || error.message))
+      .finally(() => enableSignIn());
+  };
+
+  return (
+    <form onSubmit={signIn} className="flex flex-col gap-4">
+      <label className="flex flex-col gap-1 dark:text-gray-200">
+        Email address*
+        <Input type="email" name="email" required placeholder="Email address*" defaultValue="default_user@example.com" />
+      </label>
+      <label className="flex flex-col gap-1 dark:text-gray-200">
+        Password*
+        <Input type="password" name="password" required placeholder="Password*" defaultValue="default_password" />
+      </label>
+      <CTAButton className="mt-6 mb-2" type="submit">
+        {submitButtonText}
+        {isSigningIn && <LoadingIndicator />}
+      </CTAButton>
+      {signInError && (
+        <span className="text-s text-red-500 mb-4">{signInError}</span>
+      )}
+    </form>
+  );
 }

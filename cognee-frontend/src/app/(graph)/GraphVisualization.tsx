@@ -6,6 +6,7 @@ import { forceCollide, forceManyBody } from "d3-force-3d";
 import dynamic from "next/dynamic";
 import { GraphControlsAPI } from "./GraphControls";
 import getColorForNodeType from "./getColorForNodeType";
+import { useDarkMode } from "@/utils/useDarkMode";
 
 // Dynamically import ForceGraph to prevent SSR issues
 const ForceGraph = dynamic(() => import("react-force-graph-2d"), {
@@ -46,7 +47,7 @@ export default function GraphVisualization({ ref, data, graphControls, className
       if (graphRef.current) {
         // Small delay to ensure DOM has updated
         setTimeout(() => {
-          graphRef.current?.zoomToFit(1000,50);
+          graphRef.current?.zoomToFit(1000, 50);
         }, 100);
       }
     }
@@ -92,7 +93,7 @@ export default function GraphVisualization({ ref, data, graphControls, className
     // const graphClickCoords = graphRef.current!.screen2GraphCoords(x, y);
 
     // const distanceFromAddNode = Math.sqrt(
-      // Math.pow(graphClickCoords.x - (selectedNode!.x! + addNodeDistanceFromSourceNode), 2)
+    // Math.pow(graphClickCoords.x - (selectedNode!.x! + addNodeDistanceFromSourceNode), 2)
     //   + Math.pow(graphClickCoords.y - (selectedNode!.y! + addNodeDistanceFromSourceNode), 2)
     // );
 
@@ -103,6 +104,8 @@ export default function GraphVisualization({ ref, data, graphControls, className
     //   graphControls.current?.setSelectedNode(null);
     // }
   };
+
+  const { isDarkMode } = useDarkMode();
 
   function renderNode(node: NodeObject, ctx: CanvasRenderingContext2D, globalScale: number, renderType: string = "replace") {
     // const selectedNode = graphControls.current?.getSelectedNode();
@@ -143,7 +146,7 @@ export default function GraphVisualization({ ref, data, graphControls, className
     ctx.translate(textPos.x, textPos.y);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#333333";
+    ctx.fillStyle = isDarkMode ? "white" : "#333333";
     ctx.font = `${textSize}px Sans-Serif`;
     ctx.fillText(node.label, 0, 0);
 
@@ -188,12 +191,12 @@ export default function GraphVisualization({ ref, data, graphControls, className
     ctx.translate(textPos.x, textPos.y);
     ctx.rotate(textAngle);
 
-    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    ctx.fillStyle = isDarkMode ? "rgba(30, 41, 59, 0.8)" : "rgba(255, 255, 255, 0.8)";
     ctx.fillRect(- bckgDimensions[0] / 2, - bckgDimensions[1] / 2, bckgDimensions[0], bckgDimensions[1]);
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "darkgrey";
+    ctx.fillStyle = isDarkMode ? "lightgrey" : "darkgrey";
     ctx.fillText(label, 0, 0);
     ctx.restore();
   }
@@ -203,7 +206,7 @@ export default function GraphVisualization({ ref, data, graphControls, className
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function handleDagError(loopNodeIds: (string | number)[]) {}
+  function handleDagError(loopNodeIds: (string | number)[]) { }
 
   const graphRef = useRef<ForceGraphMethods>(null);
 

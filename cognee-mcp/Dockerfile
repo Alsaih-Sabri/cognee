@@ -33,6 +33,9 @@ COPY ./cognee-mcp/pyproject.toml ./cognee-mcp/uv.lock ./cognee-mcp/entrypoint.sh
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project --no-dev --no-editable
 
+# Copy the cognee package (required for imports like cognee.shared.usage_logger)
+COPY cognee/ /app/cognee/
+
 # Copy Alembic configuration
 COPY cognee/alembic.ini /app/cognee/alembic.ini
 COPY cognee/alembic/ /app/cognee/alembic

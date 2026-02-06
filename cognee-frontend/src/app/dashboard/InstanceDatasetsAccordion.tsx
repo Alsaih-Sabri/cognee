@@ -23,13 +23,13 @@ export default function InstanceDatasetsAccordion({ onDatasetsChange }: Instance
   } = useBoolean(isCloudEnvironment());
 
   const checkConnectionToCloudCognee = useCallback((apiKey?: string) => {
-      if (apiKey) {
-        fetch.setApiKey(apiKey);
-        setApiKey(apiKey);
-      }
-      return checkCloudConnection()
-        .then(setCloudCogneeConnected)
-    }, [setCloudCogneeConnected]);
+    if (apiKey) {
+      fetch.setApiKey(apiKey);
+      setApiKey(apiKey);
+    }
+    return checkCloudConnection()
+      .then(setCloudCogneeConnected)
+  }, [setCloudCogneeConnected]);
 
   useEffect(() => {
     const checkConnectionToLocalCognee = () => {
@@ -68,16 +68,16 @@ export default function InstanceDatasetsAccordion({ onDatasetsChange }: Instance
         title={(
           <div className="flex flex-row items-center justify-between">
             <div className="flex flex-row items-center gap-2">
-              <LocalCogneeIcon className="text-indigo-700" />
-              <span className="text-xs">local cognee</span>
+              <LocalCogneeIcon className="text-indigo-700 dark:text-indigo-400" />
+              <span className="text-xs text-gray-900 dark:text-gray-200">local cognee</span>
             </div>
           </div>
         )}
-        tools={isLocalCogneeConnected ? <span className="text-xs text-indigo-600">Connected</span> : <span className="text-xs text-gray-400">Not connected</span>}
+        tools={isLocalCogneeConnected ? <span className="text-xs text-indigo-600 dark:text-indigo-400">Connected</span> : <span className="text-xs text-gray-400 dark:text-gray-500">Not connected</span>}
         switchCaretPosition={true}
         className="pt-3 pb-1.5"
         contentClassName="pl-4"
-        onDatasetsChange={!isCloudEnv ? onDatasetsChange : () => {}}
+        onDatasetsChange={!isCloudEnv ? onDatasetsChange : () => { }}
       />
 
       {isCloudCogneeConnected ? (
@@ -85,45 +85,45 @@ export default function InstanceDatasetsAccordion({ onDatasetsChange }: Instance
           title={(
             <div className="flex flex-row items-center justify-between">
               <div className="flex flex-row items-center gap-2">
-                <LocalCogneeIcon className="text-indigo-700" />
-                <span className="text-xs">cloud cognee</span>
+                <LocalCogneeIcon className="text-indigo-700 dark:text-indigo-400" />
+                <span className="text-xs text-gray-900 dark:text-gray-200">cloud cognee</span>
               </div>
             </div>
           )}
-          tools={<span className="text-xs text-indigo-600">Connected</span>}
+          tools={<span className="text-xs text-indigo-600 dark:text-indigo-400">Connected</span>}
           switchCaretPosition={true}
           className="pt-3 pb-1.5"
           contentClassName="pl-4"
-          onDatasetsChange={isCloudEnv ? onDatasetsChange : () => {}}
+          onDatasetsChange={isCloudEnv ? onDatasetsChange : () => { }}
           useCloud={true}
         />
       ) : (
-        <button className="w-full flex flex-row items-center justify-between py-1.5 cursor-pointer pt-3" onClick={!isCloudCogneeConnected ? openCloudConnectionModal : () => {}}>
+        <button className="w-full flex flex-row items-center justify-between py-1.5 cursor-pointer pt-3 group" onClick={!isCloudCogneeConnected ? openCloudConnectionModal : () => { }}>
           <div className="flex flex-row items-center gap-1.5">
-            <CaretIcon className="rotate-[-90deg]" />
+            <CaretIcon className="rotate-[-90deg] text-gray-900 dark:text-gray-200" />
             <div className="flex flex-row items-center gap-2">
-              <CloudIcon color="#000000" />
-              <span className="text-xs">cloud cognee</span>
+              <CloudIcon className="text-gray-900 dark:text-gray-200" />
+              <span className="text-xs text-gray-900 dark:text-gray-200">cloud cognee</span>
             </div>
           </div>
-          <span className="text-xs text-gray-400">Not connected</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">Not connected</span>
         </button>
       )}
 
       <Modal isOpen={isCloudConnectedModalOpen}>
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl transition-colors dark:text-white">
           <div className="flex flex-row items-center justify-between">
-            <span className="text-2xl">Connect to cloud?</span>
+            <span className="text-2xl font-semibold">Connect to cloud?</span>
             <IconButton onClick={closeCloudConnectionModal}><CloseIcon /></IconButton>
           </div>
-          <div className="mt-8 mb-6">Please provide your API key. You can find it on <a className="!text-indigo-600" href="https://platform.cognee.ai">our platform.</a></div>
+          <div className="mt-8 mb-6 text-gray-600 dark:text-gray-300">Please provide your API key. You can find it on <a className="!text-indigo-600 dark:!text-indigo-400" href="https://platform.cognee.ai">our platform.</a></div>
           <form onSubmit={handleCloudConnectionConfirm}>
             <div className="max-w-md">
               <Input name="apiKey" type="text" placeholder="cloud API key" required />
             </div>
-            <div className="flex flex-row gap-4 mt-4 justify-end">
-              <GhostButton type="button" onClick={() => closeCloudConnectionModal()}>cancel</GhostButton>
-              <CTAButton type="submit">connect</CTAButton>
+            <div className="flex flex-row gap-4 mt-8 justify-end">
+              <GhostButton type="button" onClick={() => closeCloudConnectionModal()}>Cancel</GhostButton>
+              <CTAButton type="submit">Connect</CTAButton>
             </div>
           </form>
         </div>

@@ -54,13 +54,13 @@ const NotebookCell = memo(function NotebookCell({
 }: NotebookCellProps) {
   return (
     <Fragment>
-      <div className="flex flex-row rounded-xl border-1 border-gray-100">
+      <div className="flex flex-row rounded-xl border border-gray-100 dark:border-gray-700 transition-colors">
         <div className="flex flex-col flex-1 relative">
           {cell.type === "code" ? (
             <>
               <div className="absolute left-[-1.35rem] top-2.5">
                 <IconButton className="p-[0.25rem] m-[-0.25rem]" onClick={onToggleOpen}>
-                  <CaretIcon className={classNames("transition-transform", isOpen ? "rotate-0" : "rotate-180")} />
+                  <CaretIcon className={classNames("transition-transform dark:text-gray-400", isOpen ? "rotate-0" : "rotate-180")} />
                 </IconButton>
               </div>
 
@@ -82,17 +82,17 @@ const NotebookCell = memo(function NotebookCell({
                     isAutoExpanding
                     name="cellInput"
                     placeholder="Type your code here..."
-                    className="resize-none min-h-36 max-h-96 overflow-y-auto rounded-tl-none rounded-tr-none rounded-bl-xl rounded-br-xl border-0 !outline-0"
+                    className="resize-none min-h-36 max-h-96 overflow-y-auto rounded-tl-none rounded-tr-none rounded-bl-xl rounded-br-xl border-0 !outline-0 dark:!bg-gray-800 dark:text-gray-100 font-mono"
                   />
 
-                  <div className="flex flex-col bg-gray-100 overflow-x-auto max-w-full">
+                  <div className="flex flex-col bg-gray-100 dark:bg-gray-900/50 overflow-x-auto max-w-full rounded-b-xl border-t border-gray-100 dark:border-gray-700">
                     {cell.result && (
-                      <div className="px-2 py-2">
+                      <div className="px-2 py-2 dark:text-gray-200">
                         output: <CellResult content={cell.result} />
                       </div>
                     )}
                     {!!cell.error?.length && (
-                      <div className="px-2 py-2">
+                      <div className="px-2 py-2 text-red-600 dark:text-red-400">
                         error: {cell.error}
                       </div>
                     )}
@@ -104,7 +104,7 @@ const NotebookCell = memo(function NotebookCell({
             <>
               <div className="absolute left-[-1.35rem] top-2.5">
                 <IconButton className="p-[0.25rem] m-[-0.25rem]" onClick={onToggleOpen}>
-                  <CaretIcon className={classNames("transition-transform", isOpen ? "rotate-0" : "rotate-180")} />
+                  <CaretIcon className={classNames("transition-transform dark:text-gray-400", isOpen ? "rotate-0" : "rotate-180")} />
                 </IconButton>
               </div>
 
@@ -121,7 +121,7 @@ const NotebookCell = memo(function NotebookCell({
                 <div className="relative rounded-tl-none rounded-tr-none rounded-bl-xl rounded-br-xl border-0 overflow-hidden">
                   <GhostButton
                     onClick={onToggleMarkdownEdit}
-                    className="absolute top-2 right-2.5 text-xs leading-[1] !px-2 !py-1 !h-auto"
+                    className="absolute top-2 right-2.5 text-xs leading-[1] !px-2 !py-1 !h-auto z-10"
                   >
                     {isMarkdownEditMode ? "Preview" : "Edit"}
                   </GhostButton>
@@ -132,10 +132,10 @@ const NotebookCell = memo(function NotebookCell({
                       isAutoExpanding
                       name="markdownInput"
                       placeholder="Type your markdown here..."
-                      className="resize-none min-h-24 max-h-96 overflow-y-auto rounded-tl-none rounded-tr-none rounded-bl-xl rounded-br-xl border-0 !outline-0 !bg-gray-50"
+                      className="resize-none min-h-24 max-h-96 overflow-y-auto rounded-tl-none rounded-tr-none rounded-bl-xl rounded-br-xl border-0 !outline-0 !bg-gray-50 dark:!bg-gray-900 dark:text-gray-100"
                     />
                   ) : (
-                    <MarkdownPreview content={cell.content} className="!bg-gray-50" />
+                    <MarkdownPreview content={cell.content} className="!bg-gray-50 dark:!bg-gray-900 dark:text-gray-100 p-4" />
                   )}
                 </div>
               )}
@@ -210,7 +210,7 @@ export default function Notebook({ notebook, updateNotebook, runCell }: Notebook
         content: "",
       };
       updateNotebook({
-       ...notebook,
+        ...notebook,
         cells: [newCell],
       });
       toggleCellOpen(newCell.id)
@@ -265,7 +265,7 @@ export default function Notebook({ notebook, updateNotebook, runCell }: Notebook
   const handleCellInputChange = useCallback((cellId: string, value: string) => {
     updateNotebook({
       ...notebook,
-      cells: notebook.cells.map((cell: Cell) => (cell.id === cellId ? {...cell, content: value} : cell)),
+      cells: notebook.cells.map((cell: Cell) => (cell.id === cellId ? { ...cell, content: value } : cell)),
     });
   }, [notebook, updateNotebook]);
 
@@ -304,15 +304,15 @@ export default function Notebook({ notebook, updateNotebook, runCell }: Notebook
 
     if (newName) {
       updateNotebook({
-       ...notebook,
-        cells: notebook.cells.map((c: Cell) => (c.id === cell.id ? {...c, name: newName } : c)),
+        ...notebook,
+        cells: notebook.cells.map((c: Cell) => (c.id === cell.id ? { ...c, name: newName } : c)),
       });
     }
   }, [notebook, updateNotebook]);
 
   return (
     <>
-      <div className="bg-white rounded-xl flex flex-col gap-0.5 px-7 py-5 flex-1">
+      <div className="bg-white dark:bg-gray-800 dark:text-gray-100 rounded-xl flex flex-col gap-0.5 px-7 py-5 flex-1 transition-colors">
         <div className="mb-5">{notebook.name}</div>
 
         {notebook.cells.map((cell: Cell, index) => (
@@ -358,7 +358,7 @@ function CellResult({ content }: { content: [] }) {
 
   const graphRef = useRef<GraphVisualizationAPI>(null);
   const graphControls = useRef<GraphControlsAPI>({
-    setSelectedNode: () => {},
+    setSelectedNode: () => { },
     getSelectedNode: () => null,
   });
 
@@ -372,8 +372,8 @@ function CellResult({ content }: { content: [] }) {
         // Insights search returns uncommon graph data structure
         if (Array.from(line).length > 0 && Array.isArray(line[0]) && line[0][1]["relationship_name"]) {
           parsedContent.push(
-            <div key={line[0][1]["relationship_name"]} className="w-full h-full bg-white">
-              <span className="text-sm pl-2 mb-4">reasoning graph</span>
+            <div key={line[0][1]["relationship_name"]} className="w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg overflow-hidden">
+              <span className="text-sm pl-2 mb-4 dark:text-gray-300">reasoning graph</span>
               <GraphVisualization
                 data={transformInsightsGraphData(line)}
                 ref={graphRef as MutableRefObject<GraphVisualizationAPI>}
@@ -388,30 +388,30 @@ function CellResult({ content }: { content: [] }) {
         // @ts-expect-error line can be Array or string
         for (const item of line) {
           if (
-            typeof item === "object" && item["search_result"] && (typeof(item["search_result"]) === "string"
-            || (Array.isArray(item["search_result"]) && typeof(item["search_result"][0]) === "string"))
+            typeof item === "object" && item["search_result"] && (typeof (item["search_result"]) === "string"
+              || (Array.isArray(item["search_result"]) && typeof (item["search_result"][0]) === "string"))
           ) {
             parsedContent.push(
-              <div key={String(item["search_result"])} className="w-full h-full bg-white">
-                <span className="text-sm pl-2 mb-4">query response (dataset: {item["dataset_name"]})</span>
-                <span className="block px-2 py-2 whitespace-normal">{item["search_result"]}</span>
+              <div key={String(item["search_result"])} className="w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg overflow-hidden">
+                <span className="text-sm pl-2 mb-4 dark:text-gray-300">query response (dataset: {item["dataset_name"]})</span>
+                <span className="block px-2 py-2 whitespace-normal dark:text-gray-200">{item["search_result"]}</span>
               </div>
             );
-          } else if (typeof(item) === "object" && item["search_result"] && typeof(item["search_result"]) === "object") {
+          } else if (typeof (item) === "object" && item["search_result"] && typeof (item["search_result"]) === "object") {
             parsedContent.push(
-              <pre className="px-2 w-full h-full bg-white text-sm" key={String(item).slice(0, -10)}>
+              <pre className="px-2 w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg p-2 text-sm dark:text-gray-200 overflow-x-auto" key={String(item).slice(0, -10)}>
                 {JSON.stringify(item, null, 2)}
               </pre>
             )
-          } else if (typeof(item) === "string") {
+          } else if (typeof (item) === "string") {
             parsedContent.push(
-              <pre className="px-2 w-full h-full bg-white text-sm whitespace-normal" key={item.slice(0, -10)}>
+              <pre className="px-2 w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg p-2 text-sm whitespace-normal dark:text-gray-200" key={item.slice(0, -10)}>
                 {item}
               </pre>
             );
-          } else if (typeof(item) === "object" && !(item["search_result"] || item["graphs"])) {
+          } else if (typeof (item) === "object" && !(item["search_result"] || item["graphs"])) {
             parsedContent.push(
-              <pre className="px-2 w-full h-full bg-white text-sm" key={String(item).slice(0, -10)}>
+              <pre className="px-2 w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg p-2 text-sm dark:text-gray-200 overflow-x-auto" key={String(item).slice(0, -10)}>
                 {JSON.stringify(item, null, 2)}
               </pre>
             )
@@ -420,8 +420,8 @@ function CellResult({ content }: { content: [] }) {
           if (typeof item === "object" && item["graphs"] && typeof item["graphs"] === "object") {
             Object.entries<{ nodes: []; edges: []; }>(item["graphs"]).forEach(([datasetName, graph]) => {
               parsedContent.push(
-                <div key={datasetName} className="w-full h-full bg-white">
-                  <span className="text-sm pl-2 mb-4">reasoning graph (datasets: {datasetName})</span>
+                <div key={datasetName} className="w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg overflow-hidden">
+                  <span className="text-sm pl-2 mb-4 dark:text-gray-300">reasoning graph (datasets: {datasetName})</span>
                   <GraphVisualization
                     data={transformToVisualizationData(graph)}
                     ref={graphRef as MutableRefObject<GraphVisualizationAPI>}
@@ -434,24 +434,24 @@ function CellResult({ content }: { content: [] }) {
           }
         }
       }
-      else if (typeof(line) === "object" && line["result"] && typeof(line["result"]) === "string") {
+      else if (typeof (line) === "object" && line["result"] && typeof (line["result"]) === "string") {
         const datasets = Array.from(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           new Set(Object.values(line["datasets"]).map((dataset: any) => dataset.name))
         ).join(", ");
 
         parsedContent.push(
-          <div key={line["result"]} className="w-full h-full bg-white">
-            <span className="text-sm pl-2 mb-4">query response (datasets: {datasets})</span>
-            <span className="block px-2 py-2 whitespace-normal">{line["result"]}</span>
+          <div key={line["result"]} className="w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg overflow-hidden">
+            <span className="text-sm pl-2 mb-4 dark:text-gray-300">query response (datasets: {datasets})</span>
+            <span className="block px-2 py-2 whitespace-normal dark:text-gray-200">{line["result"]}</span>
           </div>
         );
 
         if (line["graphs"]) {
           Object.entries<{ nodes: []; edges: []; }>(line["graphs"]).forEach(([datasetName, graph]) => {
             parsedContent.push(
-              <div key={datasetName} className="w-full h-full bg-white">
-                <span className="text-sm pl-2 mb-4">reasoning graph (datasets: {datasetName})</span>
+              <div key={datasetName} className="w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg overflow-hidden">
+                <span className="text-sm pl-2 mb-4 dark:text-gray-300">reasoning graph (datasets: {datasetName})</span>
                 <GraphVisualization
                   data={transformToVisualizationData(graph)}
                   ref={graphRef as MutableRefObject<GraphVisualizationAPI>}
@@ -463,23 +463,23 @@ function CellResult({ content }: { content: [] }) {
           });
         }
       }
-      else if (typeof(line) === "object" && line["result"] && typeof(line["result"]) === "object") {
+      else if (typeof (line) === "object" && line["result"] && typeof (line["result"]) === "object") {
         parsedContent.push(
-          <pre className="px-2 w-full h-full bg-white text-sm" key={String(line).slice(0, -10)}>
+          <pre className="px-2 w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg p-2 text-sm dark:text-gray-200 overflow-x-auto" key={String(line).slice(0, -10)}>
             {JSON.stringify(line["result"], null, 2)}
           </pre>
         )
       }
-      else if (typeof(line) === "object") {
+      else if (typeof (line) === "object") {
         parsedContent.push(
-          <pre className="px-2 w-full h-full bg-white text-sm" key={String(line).slice(0, -10)}>
+          <pre className="px-2 w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg p-2 text-sm dark:text-gray-200 overflow-x-auto" key={String(line).slice(0, -10)}>
             {JSON.stringify(line, null, 2)}
           </pre>
         )
       }
-      else if (typeof(line) === "string") {
+      else if (typeof (line) === "string") {
         parsedContent.push(
-          <pre className="px-2 w-full h-full bg-white text-sm whitespace-normal" key={String(line).slice(0, -10)}>
+          <pre className="px-2 w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg p-2 text-sm whitespace-normal dark:text-gray-200" key={String(line).slice(0, -10)}>
             {line}
           </pre>
         )
@@ -487,7 +487,7 @@ function CellResult({ content }: { content: [] }) {
     } catch {
       // It is fine if we don't manage to parse the output line, we show it as it is.
       parsedContent.push(
-        <pre className="px-2 w-full h-full bg-white text-sm whitespace-normal" key={String(line).slice(0, -10)}>
+        <pre className="px-2 w-full h-full bg-white dark:bg-gray-800 transition-colors rounded-lg p-2 text-sm whitespace-normal dark:text-gray-200" key={String(line).slice(0, -10)}>
           {line}
         </pre>
       );

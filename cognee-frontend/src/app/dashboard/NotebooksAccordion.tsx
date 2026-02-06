@@ -71,7 +71,7 @@ export default function NotebooksAccordion({
     const notebookName = formElements.notebookName.value.trim();
 
     return addNotebook(notebookName)
-      .then(() => {});
+      .then(() => { });
   }, [addNotebook]);
 
   const {
@@ -114,35 +114,35 @@ export default function NotebooksAccordion({
       </Accordion>
 
       <Modal isOpen={isNewNotebookModalOpen}>
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl transition-colors dark:text-white">
           <div className="flex flex-row items-center justify-between">
-            <span className="text-2xl">Create a new notebook?</span>
+            <span className="text-2xl font-semibold">Create a new notebook?</span>
             <IconButton onClick={closeNewNotebookModal}><CloseIcon /></IconButton>
           </div>
-          <div className="mt-8 mb-6">Please provide a name for the notebook being created.</div>
+          <div className="mt-8 mb-6 text-gray-600 dark:text-gray-300">Please provide a name for the notebook being created.</div>
           <form onSubmit={handleNewNotebookSubmit}>
             <div className="max-w-md">
               <Input name="notebookName" type="text" placeholder="Notebook name" required />
               {/* {newDatasetError && <span className="text-sm pl-4 text-gray-400">{newDatasetError}</span>} */}
             </div>
-            <div className="flex flex-row gap-4 mt-4 justify-end">
-              <GhostButton type="button" onClick={() => closeNewNotebookModal()}>cancel</GhostButton>
-              <CTAButton type="submit">create</CTAButton>
+            <div className="flex flex-row gap-4 mt-8 justify-end">
+              <GhostButton type="button" onClick={() => closeNewNotebookModal()}>Cancel</GhostButton>
+              <CTAButton type="submit">Create</CTAButton>
             </div>
           </form>
         </div>
       </Modal>
 
       <Modal isOpen={isRemoveNotebookModalOpen}>
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl transition-colors dark:text-white">
           <div className="flex flex-row items-center justify-between">
-            <span className="text-2xl">Delete <span className="text-indigo-600">{notebookToRemove?.name}</span> notebook?</span>
+            <span className="text-2xl font-semibold">Delete <span className="text-indigo-600 dark:text-indigo-400">{notebookToRemove?.name}</span> notebook?</span>
             <IconButton onClick={handleNotebookRemoveCancel}><CloseIcon /></IconButton>
           </div>
-          <div className="mt-8 mb-6">Are you sure you want to delete <span className="text-indigo-600">{notebookToRemove?.name}</span>? This action cannot be undone.</div>
-          <div className="flex flex-row gap-4 mt-4 justify-end">
-            <GhostButton type="button" onClick={handleNotebookRemoveCancel}>cancel</GhostButton>
-            <CTAButton onClick={handleNotebookRemoveConfirm} type="submit">delete</CTAButton>
+          <div className="mt-8 mb-6 text-gray-600 dark:text-gray-300">Are you sure you want to delete <span className="text-indigo-600 dark:text-indigo-400 font-medium">{notebookToRemove?.name}</span>? This action cannot be undone.</div>
+          <div className="flex flex-row gap-4 mt-8 justify-end">
+            <GhostButton type="button" onClick={handleNotebookRemoveCancel}>Cancel</GhostButton>
+            <CTAButton onClick={handleNotebookRemoveConfirm} type="submit" className="!bg-red-600 hover:!bg-red-700">Delete</CTAButton>
           </div>
         </div>
       </Modal>

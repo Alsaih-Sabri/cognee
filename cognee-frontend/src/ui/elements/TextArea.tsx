@@ -91,7 +91,7 @@ export default function TextArea({
       style={style}
       value={value}
       placeholder={placeholder}
-      className={classNames("block w-full rounded-md bg-white px-4 py-4 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600", className)}
+      className={classNames("block w-full rounded-md bg-white dark:bg-gray-800 px-4 py-4 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-600 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:focus:outline-indigo-500 transition-colors", className)}
       onChange={handleChange}
       onKeyUp={onKeyUp}
       {...props}
