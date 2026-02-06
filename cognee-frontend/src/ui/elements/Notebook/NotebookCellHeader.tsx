@@ -49,7 +49,7 @@ export default function NotebookCellHeader({
   };
 
   return (
-    <div className={classNames("flex flex-row justify-between items-center h-9 bg-gray-100", className)}>
+    <div className={classNames("flex flex-row justify-between items-center h-9 bg-gray-100 dark:bg-gray-700 rounded-t-xl transition-colors dark:text-gray-100", className)}>
       <div className="flex flex-row items-center px-3.5">
         {runCell && (
           <>
@@ -59,17 +59,17 @@ export default function NotebookCellHeader({
         <span className="ml-4">{cell.type === "markdown" ? "Markdown Cell" : cell.name}</span>
       </div>
       <div className="pr-4 flex flex-row items-center gap-8">
-          {runCell && (
-            isCloudEnvironment() ? (
-              <div>
-                cloud cognee
-              </div>
-            ) : (
-              <div>
-                local cognee
-              </div>
-            )
-          )}
+        {runCell && (
+          isCloudEnvironment() ? (
+            <div>
+              cloud cognee
+            </div>
+          ) : (
+            <div>
+              local cognee
+            </div>
+          )
+        )}
         {/* <Select name="cogneeInstance" onChange={(event) => setRunInstance(event.currentTarget.value)} className="!bg-transparent outline-none cursor-pointer !hover:bg-gray-50">
           <option value="local" className="flex flex-row items-center gap-2">
             local cognee

@@ -69,9 +69,7 @@ export default function Header({ user }: HeaderProps) {
             <CloudIcon />
             <div>Sync</div>
           </GhostButton>
-          <a href="/plan" className="!text-indigo-600 dark:!text-indigo-400 pl-4 pr-4">
-            Premium
-          </a>
+
           <a href="https://platform.cognee.ai" className="!text-indigo-600 dark:!text-indigo-400 pl-4 pr-4">API keys</a>
           <IconButton
             onClick={toggleDarkMode}

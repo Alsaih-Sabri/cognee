@@ -139,7 +139,7 @@ export default function Dashboard({ accessToken }: DashboardProps) {
       <Header user={user} />
 
       <div className="relative flex-1 flex flex-row gap-2.5 items-start w-full max-w-[1920px] max-h-[calc(100% - 3.5rem)] overflow-hidden mx-auto px-2.5 pb-2.5">
-        <div className="px-5 py-4 lg:w-96 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl h-[calc(100%-2.75rem)] transition-colors">
+        <div className="px-5 py-4 lg:w-96 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl h-full transition-colors">
           <div className="relative mb-2">
             <label htmlFor="search-input"><SearchIcon className="absolute left-3 top-[10px] cursor-text dark:text-gray-400" /></label>
             <input id="search-input" className="text-xs leading-3 w-full h-8 flex flex-row items-center gap-2.5 rounded-3xl pl-9 placeholder-gray-300 dark:placeholder-gray-500 border-gray-300 dark:border-gray-600 border-[1px] focus:outline-indigo-600 dark:bg-gray-700 dark:text-white" placeholder="Search datasets..." />
@@ -166,11 +166,7 @@ export default function Dashboard({ accessToken }: DashboardProps) {
             </CogneeInstancesAccordion>
           </div>
 
-          <div className="fixed bottom-2.5 w-[calc(min(1920px,100%)/5)] lg:w-96 ml-[-1.25rem] mx-auto">
-            <a href="/plan">
-              <CTAButton className="w-full">Select a plan</CTAButton>
-            </a>
-          </div>
+
         </div>
 
         <div className="flex-1 flex flex-col justify-between h-full overflow-y-auto">

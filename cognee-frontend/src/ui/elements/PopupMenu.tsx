@@ -31,8 +31,9 @@ export default function PopupMenu({ triggerElement, triggerClassName, children, 
         <div
           className={
             classNames(
-              "absolute top-full flex flex-col gap-4 pl-1 py-3 pr-4",
-              "whitespace-nowrap bg-white border-1 border-gray-100 z-10",
+              "absolute top-full flex flex-col gap-1 py-1 min-w-[140px]",
+              "whitespace-nowrap bg-white dark:bg-gray-800 border-1 border-gray-100 dark:border-gray-700 z-50",
+              "rounded-lg shadow-lg ring-1 ring-black/5 dark:ring-white/10 overflow-hidden",
               {
                 "left-0": openToRight,
                 "right-0": !openToRight,

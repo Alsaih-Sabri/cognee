@@ -27,13 +27,7 @@ export default function Account() {
             <div className="text-sm text-gray-500 dark:text-gray-400 mb-8">Manage your account&apos;s settings.</div>
             <div className="font-medium text-lg truncate">{account.name}</div>
           </div>
-          <div className="py-4 px-5 rounded-xl bg-white dark:bg-gray-800 transition-colors dark:text-white">
-            <div className="font-semibold mb-1">Plan</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-8">You are using free version. Subscribe to get access to hosted cognee with your data!</div>
-            <Link href="/plan">
-              <CTAButton className="w-full"><span className="">Select a plan</span></CTAButton>
-            </Link>
-          </div>
+
         </div>
         <div className="flex-1/5 py-4 px-5 rounded-xl">
         </div>

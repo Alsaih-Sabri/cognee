@@ -8,7 +8,7 @@ interface MarkdownPreviewProps {
 
 function MarkdownPreview({ content, className = "" }: MarkdownPreviewProps) {
   return (
-    <div className={`min-h-24 max-h-96 overflow-y-auto p-4 prose prose-sm max-w-none ${className}`}>
+    <div className={`min-h-24 max-h-96 overflow-y-auto p-4 prose prose-sm max-w-none dark:prose-invert ${className}`}>
       <ReactMarkdown
         components={{
           h1: ({ children }) => <h1 className="text-2xl font-bold mt-4 mb-2">{children}</h1>,
@@ -22,22 +22,22 @@ function MarkdownPreview({ content, className = "" }: MarkdownPreviewProps) {
           ol: ({ children }) => <ol className="list-decimal list-inside mb-2 ml-4">{children}</ol>,
           li: ({ children }) => <li className="mb-1">{children}</li>,
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2">{children}</blockquote>
+            <blockquote className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic my-2">{children}</blockquote>
           ),
           code: ({ className, children, ...props }) => {
             const isInline = !className;
             return isInline ? (
-              <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono" {...props}>
+              <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm font-mono" {...props}>
                 {children}
               </code>
             ) : (
-              <code className="block bg-gray-100 p-2 rounded text-sm font-mono overflow-x-auto" {...props}>
+              <code className="block bg-gray-100 dark:bg-gray-800 p-2 rounded text-sm font-mono overflow-x-auto" {...props}>
                 {children}
               </code>
             );
           },
           pre: ({ children }) => (
-            <pre className="bg-gray-100 p-2 rounded text-sm font-mono overflow-x-auto mb-2">
+            <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded text-sm font-mono overflow-x-auto mb-2">
               {children}
             </pre>
           ),
@@ -48,22 +48,22 @@ function MarkdownPreview({ content, className = "" }: MarkdownPreviewProps) {
           ),
           strong: ({ children }) => <strong className="font-bold">{children}</strong>,
           em: ({ children }) => <em className="italic">{children}</em>,
-          hr: () => <hr className="my-4 border-gray-300" />,
+          hr: () => <hr className="my-4 border-gray-300 dark:border-gray-700" />,
           table: ({ children }) => (
             <div className="overflow-x-auto my-2">
-              <table className="min-w-full border border-gray-300">{children}</table>
+              <table className="min-w-full border border-gray-300 dark:border-gray-700">{children}</table>
             </div>
           ),
-          thead: ({ children }) => <thead className="bg-gray-100">{children}</thead>,
+          thead: ({ children }) => <thead className="bg-gray-100 dark:bg-gray-800">{children}</thead>,
           tbody: ({ children }) => <tbody>{children}</tbody>,
-          tr: ({ children }) => <tr className="border-b border-gray-300">{children}</tr>,
+          tr: ({ children }) => <tr className="border-b border-gray-300 dark:border-gray-700">{children}</tr>,
           th: ({ children }) => (
-            <th className="border border-gray-300 px-4 py-2 text-left font-bold">
+            <th className="border border-gray-300 dark:border-gray-700 px-4 py-2 text-left font-bold">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="border border-gray-300 px-4 py-2">{children}</td>
+            <td className="border border-gray-300 dark:border-gray-700 px-4 py-2">{children}</td>
           ),
         }}
       >
