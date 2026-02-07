@@ -29,6 +29,7 @@ services:
       - VECTOR_DB_PROVIDER=${VECTOR_DB_PROVIDER}
       - VECTOR_DB_KEY=${VECTOR_DB_KEY}
       - ENABLE_BACKEND_ACCESS_CONTROL=${ENABLE_BACKEND_ACCESS_CONTROL}
+      - ROOT_PATH=/api
     labels:
       - "traefik.enable=true"
       # Route requests starting with /api to Port 8000
@@ -38,7 +39,10 @@ services:
       - "traefik.http.routers.cognee-api.priority=20"
       # Middleware to remove /api from the URL before it reaches the backend
       - "traefik.http.middlewares.cognee-strip.stripprefix.prefixes=/api"
-      - "traefik.http.routers.cognee-api.middlewares=cognee-strip"
+      # INTERNAL PATH MIDDLEWARE (Adds /v1 prefix) 
+      - "traefik.http.middlewares.cognee-internal.addprefix.prefix=/v1"
+      # Apply both: Strip first, then Add Internal 
+      - "traefik.http.routers.cognee-api.middlewares=cognee-strip,cognee-internal"
       - "traefik.http.services.cognee-api.loadbalancer.server.port=8000"
     deploy:
       resources:
