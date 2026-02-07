@@ -13,16 +13,22 @@ services:
       - cognee_data:/app/cognee
     environment:
       - DEBUG=${DEBUG}
-      - HOST=${HOST}
+      - HOST=${HOST:-0.0.0.0}
       - ENVIRONMENT=${ENVIRONMENT}
       - LOG_LEVEL=${LOG_LEVEL}
       - CORS_ALLOWED_ORIGINS=https://${DOMAIN}
-      - DB_PROVIDER=${DB_PROVIDER}
+      # Database Configuration
+      - DB_PROVIDER=${DB_PROVIDER:-postgres}
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=${POSTGRES_DB}
       - DB_USERNAME=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
+      # Cache Configuration (Redis)
+      - CACHE_BACKEND=redis
+      - CACHE_HOST=redis
+      - CACHE_PORT=6379
+      # LLM & Vector DB
       - LLM_API_KEY=${LLM_API_KEY}
       - LLM_MODEL=${LLM_MODEL}
       - LLM_PROVIDER=${LLM_PROVIDER}
@@ -39,16 +45,19 @@ services:
       - "traefik.http.routers.cognee-api.priority=20"
       # Middleware to remove /api from the URL before it reaches the backend
       - "traefik.http.middlewares.cognee-strip.stripprefix.prefixes=/api"
-      # INTERNAL PATH MIDDLEWARE (Adds /v1 prefix) 
-      - "traefik.http.middlewares.cognee-internal.addprefix.prefix=/v1"
-      # Apply both: Strip first, then Add Internal 
-      - "traefik.http.routers.cognee-api.middlewares=cognee-strip,cognee-internal"
+      # INTERNAL PATH MIDDLEWARE (Adds /v1 prefix if your app expects it, check if needed) 
+      # - "traefik.http.middlewares.cognee-internal.addprefix.prefix=/v1"
+      # Apply Middleware
+      - "traefik.http.routers.cognee-api.middlewares=cognee-strip"
       - "traefik.http.services.cognee-api.loadbalancer.server.port=8000"
+    depends_on:
+      - postgres
+      - redis
     deploy:
       resources:
         limits:
-          cpus: "${COGNEE_CPU_LIMIT}"
-          memory: "${COGNEE_MEM_LIMIT}"
+          cpus: "${COGNEE_CPU_LIMIT:-2.0}"
+          memory: "${COGNEE_MEM_LIMIT:-4G}"
 
   # --- FRONTEND ---
   frontend:
@@ -59,7 +68,8 @@ services:
     networks:
       - dokploy-network
     environment:
-      - NEXT_PUBLIC_BACKEND_API_URL=https://${DOMAIN}
+      # Ensure this points to the external URL, handled by Traefik
+      - NEXT_PUBLIC_BACKEND_API_URL=https://${DOMAIN}/api
     labels:
       - "traefik.enable=true"
       # Catch-all for the domain (Priority 10) to Port 3000
@@ -78,7 +88,7 @@ services:
     networks:
       - dokploy-network
     environment:
-      - TRANSPORT_MODE=${MCP_TRANSPORT_MODE}
+      - TRANSPORT_MODE=${MCP_TRANSPORT_MODE:-sse}
       - API_URL=http://cognee:8000
     labels:
       - "traefik.enable=true"
@@ -110,6 +120,16 @@ services:
       timeout: 5s
       retries: 5
 
+  # Redis for Caching/Locking
+  redis:
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - dokploy-network
+    volumes:
+      - redis_data:/data
+    command: [ "redis-server", "--appendonly", "yes" ]
+
   chromadb:
     image: chromadb/chroma:0.6.3
     restart: always
@@ -121,6 +141,8 @@ services:
     volumes:
       - chromadb_data:/chroma/chroma/
 
+# ⚠️ IMPORTANT: Dokploy manages the 'dokploy-network'. 
+# Ensure it exists or update the network name to match your Dokploy configuration.
 networks:
   dokploy-network:
     external: true
@@ -129,3 +151,4 @@ volumes:
   cognee_data:
   postgres_data:
   chromadb_data:
+  redis_data:
