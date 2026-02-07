@@ -18,6 +18,8 @@ services:
       - "traefik.http.routers.cognee-frontend.tls.certresolver=letsencrypt"
       - "traefik.http.routers.cognee-frontend.priority=1" # Lower priority for root
       - "traefik.http.services.cognee-frontend.loadbalancer.server.port=3000"
+    ports:
+      - "3000:3000"
 
   # 2. Main Backend (FastAPI/Python)
   cognee:
@@ -52,6 +54,8 @@ services:
       - "traefik.http.middlewares.cognee-stripper.stripprefix.prefixes=/api"
       - "traefik.http.routers.cognee-api.middlewares=cognee-stripper"
       - "traefik.http.services.cognee-api.loadbalancer.server.port=8000"
+    ports:
+      - "8000:8000"
 
   # 3. Cognee MCP Server
   cognee-mcp:
@@ -75,6 +79,8 @@ services:
       - "traefik.http.middlewares.cognee-mcp-strip.stripprefix.prefixes=/mcp"
       - "traefik.http.routers.cognee-mcp.middlewares=cognee-mcp-strip"
       - "traefik.http.services.cognee-mcp.loadbalancer.server.port=8000"
+    ports:
+      - "8001:8000"
 
   # 4. Postgres with Vector
   postgres:
