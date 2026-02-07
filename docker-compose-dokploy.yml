@@ -1,13 +1,14 @@
 version: '3.8'
 
 services:
+  # --- COGNEE BACKEND ---
   cognee:
-    restart: always
-    networks:
-      - dokploy-network
     build:
       context: .
       dockerfile: Dockerfile
+    restart: always
+    networks:
+      - dokploy-network
     volumes:
       - cognee_data:/app/cognee
     environment:
@@ -27,12 +28,15 @@ services:
       - LLM_PROVIDER=${LLM_PROVIDER}
       - VECTOR_DB_PROVIDER=${VECTOR_DB_PROVIDER}
       - VECTOR_DB_KEY=${VECTOR_DB_KEY}
+      - ENABLE_BACKEND_ACCESS_CONTROL=${ENABLE_BACKEND_ACCESS_CONTROL}
     labels:
       - "traefik.enable=true"
+      # Route requests starting with /api to Port 8000
       - "traefik.http.routers.cognee-api.rule=Host(`${DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.cognee-api.entrypoints=websecure"
       - "traefik.http.routers.cognee-api.tls.certresolver=letsencrypt"
       - "traefik.http.routers.cognee-api.priority=20"
+      # Middleware to remove /api from the URL before it reaches the backend
       - "traefik.http.middlewares.cognee-strip.stripprefix.prefixes=/api"
       - "traefik.http.routers.cognee-api.middlewares=cognee-strip"
       - "traefik.http.services.cognee-api.loadbalancer.server.port=8000"
@@ -42,17 +46,34 @@ services:
           cpus: "${COGNEE_CPU_LIMIT}"
           memory: "${COGNEE_MEM_LIMIT}"
 
-  cognee-mcp:
+  # --- FRONTEND ---
+  frontend:
+    build:
+      context: ./cognee-frontend
+      dockerfile: Dockerfile
     restart: always
     networks:
       - dokploy-network
+    environment:
+      - NEXT_PUBLIC_BACKEND_API_URL=https://${DOMAIN}
+    labels:
+      - "traefik.enable=true"
+      # Catch-all for the domain (Priority 10) to Port 3000
+      - "traefik.http.routers.cognee-ui.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.cognee-ui.entrypoints=websecure"
+      - "traefik.http.routers.cognee-ui.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.cognee-ui.priority=10"
+      - "traefik.http.services.cognee-ui.loadbalancer.server.port=3000"
+
+  # --- COGNEE MCP SERVER ---
+  cognee-mcp:
     build:
       context: .
       dockerfile: cognee-mcp/Dockerfile
+    restart: always
+    networks:
+      - dokploy-network
     environment:
-      - DEBUG=${DEBUG}
-      - ENVIRONMENT=${ENVIRONMENT}
-      - LOG_LEVEL=${LOG_LEVEL}
       - TRANSPORT_MODE=${MCP_TRANSPORT_MODE}
       - API_URL=http://cognee:8000
     labels:
@@ -67,23 +88,7 @@ services:
     depends_on:
       - cognee
 
-  frontend:
-    restart: always
-    networks:
-      - dokploy-network
-    build:
-      context: ./cognee-frontend
-      dockerfile: Dockerfile
-    environment:
-      - NEXT_PUBLIC_BACKEND_API_URL=https://${DOMAIN}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.cognee-ui.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.cognee-ui.entrypoints=websecure"
-      - "traefik.http.routers.cognee-ui.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.cognee-ui.priority=10"
-      - "traefik.http.services.cognee-ui.loadbalancer.server.port=3000"
-
+  # --- DATABASES ---
   postgres:
     image: pgvector/pgvector:pg17
     restart: always
@@ -112,15 +117,6 @@ services:
     volumes:
       - chromadb_data:/chroma/chroma/
 
-  redis:
-    image: redis:7-alpine
-    restart: always
-    networks:
-      - dokploy-network
-    volumes:
-      - redis_data:/data
-    command: [ "redis-server", "--appendonly", "yes" ]
-
 networks:
   dokploy-network:
     external: true
@@ -129,4 +125,3 @@ volumes:
   cognee_data:
   postgres_data:
   chromadb_data:
-  redis_data:
