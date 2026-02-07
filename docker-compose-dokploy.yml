@@ -36,6 +36,9 @@ services:
       - VECTOR_DB_KEY=${VECTOR_DB_KEY}
       - ENABLE_BACKEND_ACCESS_CONTROL=${ENABLE_BACKEND_ACCESS_CONTROL}
       - ROOT_PATH=/api
+      - ACCEPT_LOCAL_FILE_PATH=True
+      - REQUIRE_AUTHENTICATION=False
+      - ENABLE_BACKEND_ACCESS_CONTROL=True
     labels:
       - "traefik.enable=true"
       # Route requests starting with /api to Port 8000
