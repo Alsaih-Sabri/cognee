@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # 1. Frontend Service (Next.js)
+  frontend:
+    restart: always
+    networks:
+      - dokploy-network
+    build:
+      context: ./cognee-frontend
+      dockerfile: Dockerfile
+    environment:
+      - NEXT_PUBLIC_BACKEND_API_URL=https://cognee.webget.co.uk/api
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cognee-frontend.rule=Host(`cognee.webget.co.uk`)"
+      - "traefik.http.routers.cognee-frontend.entrypoints=websecure"
+      - "traefik.http.routers.cognee-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.cognee-frontend.priority=1" # Lower priority for root
+      - "traefik.http.services.cognee-frontend.loadbalancer.server.port=3000"
+
+  # 2. Main Backend (FastAPI/Python)
+  cognee:
+    restart: always
+    networks:
+      - dokploy-network
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - cognee_app_data:/app/cognee
+    environment:
+      - DEBUG=false
+      - HOST=0.0.0.0
+      - ENVIRONMENT=production
+      - DB_PROVIDER=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_NAME=${POSTGRES_DB}
+      - CORS_ALLOWED_ORIGINS=https://cognee.webget.co.uk
+    labels:
+      - "traefik.enable=true"
+      # Route all /api requests to the backend
+      - "traefik.http.routers.cognee-api.rule=Host(`cognee.webget.co.uk`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.cognee-api.entrypoints=websecure"
+      - "traefik.http.routers.cognee-api.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.cognee-api.priority=10" # Higher priority
+      # Strip the /api prefix before sending to the container if the app expects /
+      - "traefik.http.middlewares.cognee-api-strip.stripprefix.prefixes=/api"
+      - "traefik.http.routers.cognee-api.middlewares=cognee-api-strip"
+      - "traefik.http.services.cognee-api.loadbalancer.server.port=8000"
+
+  # 3. Cognee MCP Server
+  cognee-mcp:
+    restart: always
+    networks:
+      - dokploy-network
+    build:
+      context: .
+      dockerfile: cognee-mcp/Dockerfile
+    environment:
+      - API_URL=http://cognee:8000
+      - TRANSPORT_MODE=sse
+    depends_on:
+      - cognee
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cognee-mcp.rule=Host(`cognee.webget.co.uk`) && PathPrefix(`/mcp`)"
+      - "traefik.http.routers.cognee-mcp.entrypoints=websecure"
+      - "traefik.http.routers.cognee-mcp.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.cognee-mcp.priority=10"
+      - "traefik.http.middlewares.cognee-mcp-strip.stripprefix.prefixes=/mcp"
+      - "traefik.http.routers.cognee-mcp.middlewares=cognee-mcp-strip"
+      - "traefik.http.services.cognee-mcp.loadbalancer.server.port=8000"
+
+  # 4. Postgres with Vector
+  postgres:
+    image: pgvector/pgvector:pg17
+    restart: always
+    networks:
+      - dokploy-network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - cognee_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 5. ChromaDB
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    restart: always
+    networks:
+      - dokploy-network
+    environment:
+      - IS_PERSISTENT=TRUE
+      - CHROMA_SERVER_AUTH_CREDENTIALS=${VECTOR_DB_KEY}
+    volumes:
+      - cognee_chroma_data:/chroma/chroma/
+
+networks:
+  dokploy-network:
+    external: true
+
+volumes:
+  cognee_app_data:
+  cognee_postgres_data:
+  cognee_chroma_data:
