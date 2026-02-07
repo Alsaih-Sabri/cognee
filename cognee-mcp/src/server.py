@@ -47,9 +47,10 @@ cognee_client: Optional[CogneeClient] = None
 async def run_sse_with_cors():
     """Custom SSE transport with CORS middleware."""
     sse_app = mcp.sse_app()
+    allow_origins = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
     sse_app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=allow_origins,
         allow_credentials=True,
         allow_methods=["GET"],
         allow_headers=["*"],
@@ -68,9 +69,10 @@ async def run_sse_with_cors():
 async def run_http_with_cors():
     """Custom HTTP transport with CORS middleware."""
     http_app = mcp.streamable_http_app()
+    allow_origins = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
     http_app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=allow_origins,
         allow_credentials=True,
         allow_methods=["GET"],
         allow_headers=["*"],

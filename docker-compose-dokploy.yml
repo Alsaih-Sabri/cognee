@@ -90,7 +90,9 @@ services:
       - dokploy-network
     environment:
       - TRANSPORT_MODE=${MCP_TRANSPORT_MODE:-sse}
+      - TRANSPORT_MODE=${MCP_TRANSPORT_MODE:-sse}
       - API_URL=http://cognee:8000
+      - CORS_ALLOWED_ORIGINS=https://${DOMAIN},http://localhost:3000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cognee-mcp.rule=Host(`${DOMAIN}`) && PathPrefix(`/mcp`)"

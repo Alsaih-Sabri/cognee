@@ -95,7 +95,12 @@ fetch.checkHealth = async () => {
 };
 
 fetch.checkMCPHealth = () => {
-  return global.fetch(`${mcpApiUrl.replace("/api", "")}/health`);
+  // If the URL ends with /mcp, we don't need to replace /api.
+  // We just append /health.
+  // However, the existing code replaces "/api".
+  // If mcpApiUrl is ".../mcp", replace("/api", "") does nothing.
+  // Result: ".../mcp/health".
+  return global.fetch(`${mcpApiUrl}/health`);
 };
 
 fetch.setApiKey = (newApiKey: string) => {
