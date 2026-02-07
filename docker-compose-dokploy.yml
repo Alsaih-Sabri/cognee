@@ -70,6 +70,7 @@ services:
     environment:
       # Ensure this points to the external URL, handled by Traefik
       - NEXT_PUBLIC_BACKEND_API_URL=https://${DOMAIN}/api
+      - NEXT_PUBLIC_MCP_API_URL=https://${DOMAIN}/mcp
     labels:
       - "traefik.enable=true"
       # Catch-all for the domain (Priority 10) to Port 3000
